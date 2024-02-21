@@ -3,8 +3,7 @@ import ShopaholicCart from "@oc-shopaholic/shopaholic-cart/shopaholic-cart";
 import ShopaholicCartShippingType from "@oc-shopaholic/shopaholic-cart/shopaholic-cart-shipping-type";
 
 /**
- * @author  Uladzimir Ambrazhey, <v.ambrazhey@oc-shopaholic.com>, LOVATA Group
- * @author  Andrey Kharanenka, a.khoronenko@oc-shopaholic.com, LOVATA Group
+ * @author  Andrei Kharanenka, a.kharanenka@lovata.com, LOVATA Group
  */
 export default class ShopaholicCartAdd {
   constructor() {
@@ -22,15 +21,15 @@ export default class ShopaholicCartAdd {
   * Init event handlers
   */
   init() {
-    $(document).on('click', `.${this.sDefaultButtonClass}`, (obEvent) => {
-      obEvent.preventDefault();
-
-      const {currentTarget: obButton} = obEvent;
-      if (obButton.hasAttribute('disabled')) {
+    const obThis = this;
+    document.addEventListener('click', (event) => {
+      const eventNode = event.currentTarget;
+      const buttonNode = eventNode.closest(`.${obThis.sDefaultButtonClass}`);
+      if (!buttonNode || buttonNode.hasAttribute('disabled')) {
         return;
       }
 
-      this.sendAjaxRequest(obButton);
+      obThis.sendAjaxRequest(buttonNode);
     });
   }
 
@@ -71,7 +70,7 @@ export default class ShopaholicCartAdd {
 
     const ajaxHandler = iCartQuantity >= 1 && !bForceAddMethod ? this.sUpdateComponentMethod : this.sAddComponentMethod;
 
-    $.request(ajaxHandler, obRequestData);
+    oc.ajax(ajaxHandler, obRequestData);
   }
 
   /**

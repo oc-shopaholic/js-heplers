@@ -1,15 +1,16 @@
 {
-  "name": "@oc-shopaholic/shopaholic-cart",
+  "name": "@oc-shopaholic/shopaholic-coupon",
   "author": "oc-shopaholic",
-  "version": "0.0.2",
-  "description": "Package adds helper methods for integration with [Orders for Shopaholic](https://octobercms.com/plugin/lovata-ordersshopaholic) and [Shopaholic](https://octobercms.com/plugin/lovata-shopaholic) plugins.",
+  "version": "0.0.1",
+  "description": "Package adds helper methods for integration with [Coupons for Shopaholic](https://octobercms.com/plugin/lovata-couponsshopaholic) and [Shopaholic](https://octobercms.com/plugin/lovata-shopaholic) plugins.",
   "license": "GPL-3.0-or-later",
   "keywords": [
     "octobercms",
     "shopaholic",
     "cart",
     "checkout",
-    "order"
+    "order",
+    "coupon"
   ],
   "repository": {
     "type": "git",
@@ -18,9 +19,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {},
   "bugs": {
     "url": "https://github.com/oc-shopaholic/js-heplers/issues"
   },
-  "homepage": "https://shopaholic.one/docs",
-  "main": "shopaholic-cart.js"
+  "homepage": "https://shopaholic.one/docs"
 }

@@ -4,7 +4,7 @@ import ShopaholicCartShippingType from "@oc-shopaholic/shopaholic-cart/shopaholi
 
 /**
  * @author  Uladzimir Ambrazhey, <v.ambrazhey@oc-shopaholic.com>, LOVATA Group
- * @author  Andrey Kharanenka, a.khoronenko@oc-shopaholic.com, LOVATA Group
+ * @author  Andrei Kharanenka, a.kharanenka@lovata.com, LOVATA Group
  */
 export default class ShopaholicCartUpdate {
   constructor() {
@@ -33,26 +33,32 @@ export default class ShopaholicCartUpdate {
    * Init update event
    */
   initUpdateEvent() {
-    $(document).on('input', `.${this.sDefaultInputClass}`, (obEvent) => {
-      if (this.obTimer !== null) {
-        clearTimeout(this.obTimer);
+    const obThis = this;
+    document.addEventListener('input', (event) => {
+      const eventNode = event.currentTarget;
+      const inputNode = eventNode.closest(`.${obThis.sDefaultInputClass}`);
+      if (!inputNode) {
+        return;
       }
-      
-      this.obTimer = setTimeout(() => {
-        const {currentTarget: obInput} = obEvent;
-        const iMaxQuantity = this.getMaxQuantity(obInput);
-        let iQuantity = this.getQuantity(obInput);
+
+      if (obThis.obTimer !== null) {
+        clearTimeout(obThis.obTimer);
+      }
+
+      obThis.obTimer = setTimeout(() => {
+        const iMaxQuantity = obThis.getMaxQuantity(inputNode);
+        let iQuantity = obThis.getQuantity(inputNode);
         if (iQuantity < 1) {
           iQuantity = 1;
         }
 
         if (iQuantity > iMaxQuantity) {
-          obInput.value = iMaxQuantity;
+          inputNode.value = iMaxQuantity;
           return;
         }
 
-        this.sendAjaxRequest(obInput);
-      }, this.iDelayBeforeRequest);
+        obThis.sendAjaxRequest(inputNode);
+      }, obThis.iDelayBeforeRequest);
     });
   }
 
@@ -60,38 +66,44 @@ export default class ShopaholicCartUpdate {
    * Init increase event
    */
   initIncreaseEvent() {
-    $(document).on('click', `.${this.sIncreaseInputClass}`, (obEvent) => {
-      if (this.obTimer !== null) {
-        clearTimeout(this.obTimer);
+    const obThis = this;
+    document.addEventListener('click', (event) => {
+      const eventNode = event.currentTarget;
+      const buttonNode = eventNode.closest(`.${obThis.sIncreaseInputClass}`);
+      if (!buttonNode || buttonNode.hasAttribute('disabled')) {
+        return;
       }
 
-      const {currentTarget: obButton} = obEvent;
-      const obCartPosition = new ShopaholicCartPosition(obButton);
+      if (obThis.obTimer !== null) {
+        clearTimeout(obThis.obTimer);
+      }
+
+      const obCartPosition = new ShopaholicCartPosition(buttonNode);
       const obInput = obCartPosition.getQuantityInput();
-      const iMaxQuantity = this.getMaxQuantity(obInput);
-      let iQuantity = this.getQuantity(obInput) + 1;
+      const iMaxQuantity = obThis.getMaxQuantity(obInput);
+      let iQuantity = obThis.getQuantity(obInput) + 1;
       if (iQuantity > iMaxQuantity) {
         return;
       }
 
       obInput.value = iQuantity;
-      if (iQuantity == iMaxQuantity) {
-        obButton.setAttribute('disabled', 'disabled');
+      if (iQuantity === iMaxQuantity) {
+        buttonNode.setAttribute('disabled', 'disabled');
       } else {
-        obButton.removeAttribute('disabled');
+        buttonNode.removeAttribute('disabled');
       }
-      
+
       if (iQuantity > 1) {
         const obCartNode = obCartPosition.getNode();
-        const obDecreaseButton = obCartNode.querySelector(`.${this.sDecreaseInputClass}`);
+        const obDecreaseButton = obCartNode.querySelector(`.${obThis.sDecreaseInputClass}`);
         if (obDecreaseButton) {
           obDecreaseButton.removeAttribute('disabled');
         }
       }
 
-      this.obTimer = setTimeout(() => {
-        this.sendAjaxRequest(obInput);
-      }, this.iDelayBeforeRequest);
+      obThis.obTimer = setTimeout(() => {
+        obThis.sendAjaxRequest(obInput);
+      }, obThis.iDelayBeforeRequest);
     });
   }
 
@@ -99,38 +111,44 @@ export default class ShopaholicCartUpdate {
    * Init decrease event
    */
   initDecreaseEvent() {
-    $(document).on('click', `.${this.sDecreaseInputClass}`, (obEvent) => {
-      if (this.obTimer !== null) {
-        clearTimeout(this.obTimer);
+    const obThis = this;
+    document.addEventListener('click', (event) => {
+      const eventNode = event.currentTarget;
+      const buttonNode = eventNode.closest(`.${obThis.sDecreaseInputClass}`);
+      if (!buttonNode || buttonNode.hasAttribute('disabled')) {
+        return;
       }
 
-      const {currentTarget: obButton} = obEvent;
-      const obCartPosition = new ShopaholicCartPosition(obButton);
+      if (obThis.obTimer !== null) {
+        clearTimeout(obThis.obTimer);
+      }
+
+      const obCartPosition = new ShopaholicCartPosition(buttonNode);
       const obInput = obCartPosition.getQuantityInput();
-      const iMaxQuantity = this.getMaxQuantity(obInput);
-      let iQuantity = this.getQuantity(obInput) - 1;
+      const iMaxQuantity = obThis.getMaxQuantity(obInput);
+      let iQuantity = obThis.getQuantity(obInput) - 1;
       if (iQuantity < 1) {
         return;
       }
 
       obInput.value = iQuantity;
-      if (iQuantity == 1) {
-        obButton.setAttribute('disabled', 'disabled');
+      if (iQuantity === 1) {
+        buttonNode.setAttribute('disabled', 'disabled');
       } else {
-        obButton.removeAttribute('disabled');
+        buttonNode.removeAttribute('disabled');
       }
 
       if (iQuantity < iMaxQuantity) {
         const obCartNode = obCartPosition.getNode();
-        const obIncreaseButton = obCartNode.querySelector(`.${this.sIncreaseInputClass}`);
+        const obIncreaseButton = obCartNode.querySelector(`.${obThis.sIncreaseInputClass}`);
         if (obIncreaseButton) {
           obIncreaseButton.removeAttribute('disabled');
         }
       }
 
-      this.obTimer = setTimeout(() => {
-        this.sendAjaxRequest(obInput);
-      }, this.iDelayBeforeRequest);
+      obThis.obTimer = setTimeout(() => {
+        obThis.sendAjaxRequest(obInput);
+      }, obThis.iDelayBeforeRequest);
     });
   }
 
@@ -161,7 +179,7 @@ export default class ShopaholicCartUpdate {
       obRequestData = this.obAjaxRequestCallback(obRequestData, obInput);
     }
 
-    $.request(this.sUpdateComponentMethod, obRequestData);
+    oc.ajax(this.sUpdateComponentMethod, obRequestData);
   }
 
   getQuantity(obInput) {

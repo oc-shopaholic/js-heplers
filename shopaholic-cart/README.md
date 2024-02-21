@@ -233,3 +233,9 @@ Method prepares request object with order data, sends ajax request and create or
 You can set callback function. This callback function will be called before sending ajax request.
 
 You can change request object inside callback function. For example: add called partial and selector, add preloader class, etc.
+
+## License
+
+© 2024, [oc-shopaholic](https://github.com/oc-shopaholic) under [GNU GPL v3](https://opensource.org/licenses/GPL-3.0).
+
+Developed by [Andrei Kharanenka](https://github.com/kharanenka).

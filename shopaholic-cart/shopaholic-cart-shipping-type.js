@@ -2,7 +2,7 @@ import ShopaholicCart from "@oc-shopaholic/shopaholic-cart/shopaholic-cart";
 
 /**
  * @author  Uladzimir Ambrazhey, <v.ambrazhey@oc-shopaholic.com>, LOVATA Group
- * @author  Andrey Kharanenka, a.khoronenko@oc-shopaholic.com, LOVATA Group
+ * @author  Andrei Kharanenka, a.kharanenka@lovata.com, LOVATA Group
  */
 export default class ShopaholicCartShippingType {
   constructor() {
@@ -20,10 +20,15 @@ export default class ShopaholicCartShippingType {
   * Init event handlers
   */
   init() {
-    $(document).on('change', `[name="${this.sDefaultInputName}"]`, (obEvent) => {
+    const obThis = this;
+    document.addEventListener('change', (event) => {
+      const eventNode = event.currentTarget;
+      const inputNode = eventNode.closest(`[name="${obThis.sDefaultInputName}"]`);
+      if (!inputNode) {
+        return;
+      }
 
-      const {currentTarget: obInput} = obEvent;
-      this.sendAjaxRequest(obInput);
+      obThis.sendAjaxRequest(inputNode);
     });
   }
 
@@ -47,7 +52,7 @@ export default class ShopaholicCartShippingType {
       obRequestData = this.obAjaxRequestCallback(obRequestData, obInput);
     }
 
-    $.request(this.sComponentMethod, obRequestData);
+    oc.ajax(this.sComponentMethod, obRequestData);
   }
 
   /**

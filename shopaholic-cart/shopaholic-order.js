@@ -121,7 +121,7 @@ export default class ShopaholicOrder {
       obRequestData = this.obAjaxRequestCallback(obRequestData);
     }
 
-    $.request(this.sComponentMethod, obRequestData);
+    oc.ajax(this.sComponentMethod, obRequestData);
   }
 
   /**

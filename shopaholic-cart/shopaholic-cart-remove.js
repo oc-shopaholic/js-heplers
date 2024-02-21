@@ -4,7 +4,7 @@ import ShopaholicCartShippingType from "@oc-shopaholic/shopaholic-cart/shopaholi
 
 /**
  * @author  Uladzimir Ambrazhey, <v.ambrazhey@oc-shopaholic.com>, LOVATA Group
- * @author  Andrey Kharanenka, a.khoronenko@oc-shopaholic.com, LOVATA Group
+ * @author  Andrei Kharanenka, a.kharanenka@lovata.com, LOVATA Group
  */
 export default class ShopaholicCartRemove {
   constructor() {
@@ -19,15 +19,15 @@ export default class ShopaholicCartRemove {
   * Init event handlers
   */
   init() {
-    $(document).on('click', `.${this.sDefaultButtonClass}`, (obEvent) => {
-      obEvent.preventDefault();
-
-      const {currentTarget: obButton} = obEvent;
-      if (obButton.hasAttribute('disabled')) {
+    const obThis = this;
+    document.addEventListener('click', (event) => {
+      const eventNode = event.currentTarget;
+      const buttonNode = eventNode.closest(`.${obThis.sDefaultButtonClass}`);
+      if (!buttonNode || buttonNode.hasAttribute('disabled')) {
         return;
       }
 
-      this.sendAjaxRequest(obButton);
+      obThis.sendAjaxRequest(buttonNode);
     });
   }
 
@@ -60,7 +60,7 @@ export default class ShopaholicCartRemove {
       obRequestData = this.obAjaxRequestCallback(obRequestData, obButton);
     }
 
-    $.request(this.sRemoveComponentMethod, obRequestData);
+    oc.ajax(this.sRemoveComponentMethod, obRequestData);
   }
 
   /**

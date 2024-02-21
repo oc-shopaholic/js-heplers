@@ -1,5 +1,5 @@
 /**
- * @author  Andrey Kharanenka, <a.khoronenko@oc-shopaholic.com>, LOVATA Group
+ * @author  Andrei Kharanenka, <a.kharanenka@lovata.com>, LOVATA Group
  */
 import ShopaholicCartPosition from "@oc-shopaholic/shopaholic-cart/shopaholic-cart-position";
 
@@ -52,7 +52,7 @@ export default class ShopaholicCart {
       this.obCartData = responseJSON;
     };
 
-    $.request(this.sGetDataHandler, obData);
+    oc.ajax(this.sGetDataHandler, obData);
   }
 
   /**

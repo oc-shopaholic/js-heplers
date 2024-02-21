@@ -1,5 +1,5 @@
 /**
- * @author  Andrey Kharanenka, <a.khoronenko@oc-shopaholic.com>, LOVATA Group,
+ * @author  Andrei Kharanenka, <a.kharanenka@lovata.com>, LOVATA Group,
  * @author  Uladzimir Ambrazhey, <v.ambrazhey@oc-shopaholic.com>, LOVATA Group
  */
 export default class ShopaholicCartPosition {
