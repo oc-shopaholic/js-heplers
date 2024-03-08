@@ -22,7 +22,7 @@ export default class ShopaholicSorting {
   init() {
     const obThis = this;
     document.addEventListener(this.sEventType, (event) => {
-      const eventNode = event.currentTarget;
+      const eventNode = event.target;
       const selectNode = eventNode.closest(obThis.sSelectSelector);
       if (!selectNode) {
         return;

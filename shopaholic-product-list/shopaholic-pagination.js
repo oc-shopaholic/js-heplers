@@ -23,7 +23,7 @@ export default class ShopaholicPagination {
   init() {
     const obThis = this;
     document.addEventListener(this.sEventType, (event) => {
-      const eventNode = event.currentTarget;
+      const eventNode = event.target;
       const buttonNode = eventNode.closest(obThis.sButtonSelector);
       if (!buttonNode) {
         return;

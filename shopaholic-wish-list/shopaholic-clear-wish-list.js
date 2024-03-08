@@ -3,10 +3,10 @@
  */
 export default class ShopaholicClearWishList {
   constructor() {
-    this.sDefaultButtonClass = '_shopaholic-clear-wish-list-button';
-    this.sButtonSelector = `.${this.sDefaultButtonClass}`;
+    this.defaultButtonClass = '_shopaholic-clear-wish-list-button';
+    this.buttonSelector = `.${this.defaultButtonClass}`;
 
-    this.sComponentMethod = 'ProductList::onClearWishList';
+    this.componentMethod = 'ProductList::onClearWishList';
     this.obAjaxRequestCallback = null;
   }
 
@@ -16,8 +16,8 @@ export default class ShopaholicClearWishList {
   init() {
     const obThis = this;
     document.addEventListener('click', (event) => {
-      const eventNode = event.currentTarget;
-      const buttonNode = eventNode.closest(obThis.sButtonSelector);
+      const eventNode = event.target;
+      const buttonNode = eventNode.closest(obThis.buttonSelector);
       if (!buttonNode) {
         return;
       }
@@ -37,7 +37,7 @@ export default class ShopaholicClearWishList {
       obRequestData = this.obAjaxRequestCallback(obRequestData, obButton);
     }
 
-    oc.ajax(this.sComponentMethod, obRequestData);
+    oc.ajax(this.componentMethod, obRequestData);
   }
 
   /**
@@ -56,11 +56,11 @@ export default class ShopaholicClearWishList {
    * Redeclare default selector of "Clear wish list" button
    * Default value is ._shopaholic-clear-wish-list-button
    *
-   * @param {string} sSelector
+   * @param {string} selector
    * @returns {ShopaholicClearWishList}
    */
-  setButtonSelector(sSelector) {
-    this.sButtonSelector = sSelector;
+  setButtonSelector(selector) {
+    this.buttonSelector = selector;
 
     return this;
   }

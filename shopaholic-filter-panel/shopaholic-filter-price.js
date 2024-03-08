@@ -9,7 +9,7 @@ export default class ShopaholicFilterPrice {
    */
   constructor(obProductListHelper = null) {
     this.obProductListHelper = obProductListHelper;
-    this.sEventType = 'change';
+    this.sEventType = 'input';
     this.sFiledName = 'price';
 
     this.sInputMinPriceName = 'filter-min-price';
@@ -27,7 +27,7 @@ export default class ShopaholicFilterPrice {
   init() {
     const obThis = this;
     document.addEventListener(this.sEventType, (event) => {
-      const eventNode = event.currentTarget;
+      const eventNode = event.target;
       const inputNode = eventNode.closest(obThis.sInputSelector);
       if (!inputNode) {
         return;
@@ -45,7 +45,7 @@ export default class ShopaholicFilterPrice {
     });
 
     document.addEventListener('input', (event) => {
-      const eventNode = event.currentTarget;
+      const eventNode = event.target;
       const inputNode = eventNode.closest(obThis.sInputSelector);
       if (!inputNode) {
         return;

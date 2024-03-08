@@ -35,7 +35,7 @@ export default class ShopaholicCartUpdate {
   initUpdateEvent() {
     const obThis = this;
     document.addEventListener('input', (event) => {
-      const eventNode = event.currentTarget;
+      const eventNode = event.target;
       const inputNode = eventNode.closest(`.${obThis.sDefaultInputClass}`);
       if (!inputNode) {
         return;
@@ -68,7 +68,7 @@ export default class ShopaholicCartUpdate {
   initIncreaseEvent() {
     const obThis = this;
     document.addEventListener('click', (event) => {
-      const eventNode = event.currentTarget;
+      const eventNode = event.target;
       const buttonNode = eventNode.closest(`.${obThis.sIncreaseInputClass}`);
       if (!buttonNode || buttonNode.hasAttribute('disabled')) {
         return;
@@ -113,7 +113,7 @@ export default class ShopaholicCartUpdate {
   initDecreaseEvent() {
     const obThis = this;
     document.addEventListener('click', (event) => {
-      const eventNode = event.currentTarget;
+      const eventNode = event.target;
       const buttonNode = eventNode.closest(`.${obThis.sDecreaseInputClass}`);
       if (!buttonNode || buttonNode.hasAttribute('disabled')) {
         return;

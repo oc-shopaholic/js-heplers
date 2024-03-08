@@ -20,7 +20,7 @@ export default class ShopaholicCouponRemove {
   init() {
     const obThis = this;
     document.addEventListener('click', (event) => {
-      const eventNode = event.currentTarget;
+      const eventNode = event.target;
       const buttonNode = eventNode.closest(`.${obThis.sButtonClass}`);
       const obInput = document.querySelector('[data-coupon]');
       if (!buttonNode || !buttonNode.hasAttributes('disabled') || !obInput) {
@@ -36,27 +36,6 @@ export default class ShopaholicCouponRemove {
       buttonNode.setAttribute('disabled', 'disabled');
 
       this.sendAjaxRequest(sValue, obInput, buttonNode);
-    });
-
-    $(document).on('click', `.${this.sButtonClass}`, (obEvent) => {
-      obEvent.preventDefault();
-      const { currentTarget: obButton } = obEvent;
-      const obInput = document.querySelector('[data-coupon]');
-
-      let sValue = '';
-
-      if (obInput.tagName.toLocaleLowerCase() === 'input') {
-        const { value } = obInput;
-        sValue = value;
-      } else {
-        sValue = obInput.getAttribute('data-coupon-value');
-      }
-
-      if (!sValue) return;
-
-      obButton.setAttribute('disabled', 'disabled');
-
-      this.sendAjaxRequest(sValue, obInput, obButton);
     });
   }
 

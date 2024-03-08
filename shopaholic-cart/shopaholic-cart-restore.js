@@ -21,7 +21,7 @@ export default class ShopaholicCartRestore {
   init() {
     const obThis = this;
     document.addEventListener('click', (event) => {
-      const eventNode = event.currentTarget;
+      const eventNode = event.target;
       const buttonNode = eventNode.closest(`.${obThis.sDefaultButtonClass}`);
       if (!buttonNode || buttonNode.hasAttribute('disabled')) {
         return;

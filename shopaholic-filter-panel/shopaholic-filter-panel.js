@@ -24,7 +24,7 @@ export default class ShopaholicFilterPanel {
   init() {
     const obThis = this;
     document.addEventListener(this.sEventType, (event) => {
-      const eventNode = event.currentTarget;
+      const eventNode = event.target;
       const inputNode = eventNode.closest(obThis.sWrapperSelector);
       if (!inputNode) {
         return;

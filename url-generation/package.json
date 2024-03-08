@@ -1,7 +1,7 @@
 {
   "name": "@oc-shopaholic/url-generation",
   "author": "oc-shopaholic",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Package adds helper methods for URL generation",
   "license": "GPL-3.0-or-later",
   "keywords": [

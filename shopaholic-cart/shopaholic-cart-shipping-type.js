@@ -22,7 +22,7 @@ export default class ShopaholicCartShippingType {
   init() {
     const obThis = this;
     document.addEventListener('change', (event) => {
-      const eventNode = event.currentTarget;
+      const eventNode = event.target;
       const inputNode = eventNode.closest(`[name="${obThis.sDefaultInputName}"]`);
       if (!inputNode) {
         return;

@@ -3,14 +3,14 @@
  */
 export default class ShopaholicRemoveWishList {
   constructor() {
-    this.sDefaultButtonClass = '_shopaholic-remove-wish-list-button';
-    this.sButtonSelector = `.${this.sDefaultButtonClass}`;
+    this.defaultButtonClass = '_shopaholic-remove-wish-list-button';
+    this.buttonSelector = `.${this.defaultButtonClass}`;
 
-    this.sDefaultWrapperClass = '_shopaholic-product-wrapper';
-    this.sWrapperSelector = `.${this.sDefaultWrapperClass}`;
-    this.sAttributeName = 'data-product-id';
+    this.defaultWrapperClass = '_shopaholic-product-wrapper';
+    this.wrapperSelector = `.${this.defaultWrapperClass}`;
+    this.attributeName = 'data-product-id';
 
-    this.sComponentMethod = 'ProductList::onRemoveFromWishList';
+    this.componentMethod = 'ProductList::onRemoveFromWishList';
     this.obAjaxRequestCallback = null;
   }
 
@@ -20,14 +20,14 @@ export default class ShopaholicRemoveWishList {
   init() {
     const obThis = this;
     document.addEventListener('click', (event) => {
-      const eventNode = event.currentTarget;
-      const buttonNode = eventNode.closest(obThis.sButtonSelector);
-      const productWrapperNode = eventNode.closest(obThis.sWrapperSelector);
+      const eventNode = event.target;
+      const buttonNode = eventNode.closest(obThis.buttonSelector);
+      const productWrapperNode = eventNode.closest(obThis.wrapperSelector);
       if (!buttonNode || !productWrapperNode) {
         return;
       }
 
-      const iProductID = productWrapperNode.getAttribute(obThis.sAttributeName);
+      const iProductID = productWrapperNode.getAttribute(obThis.attributeName);
       if (!iProductID) {
         return;
       }
@@ -50,7 +50,7 @@ export default class ShopaholicRemoveWishList {
       obRequestData = this.obAjaxRequestCallback(obRequestData, obButton);
     }
 
-    oc.ajax(this.sComponentMethod, obRequestData);
+    oc.ajax(this.componentMethod, obRequestData);
   }
 
   /**
@@ -69,11 +69,11 @@ export default class ShopaholicRemoveWishList {
    * Redeclare default selector of "Remove from wish list" button
    * Default value is ._shopaholic-remove-wish-list-button
    *
-   * @param {string} sSelector
+   * @param {string} selector
    * @returns {ShopaholicRemoveWishList}
    */
-  setButtonSelector(sSelector) {
-    this.sButtonSelector = sSelector;
+  setButtonSelector(selector) {
+    this.buttonSelector = selector;
 
     return this;
   }

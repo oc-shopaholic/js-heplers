@@ -21,7 +21,7 @@ export default class ShopaholicSearch {
   init() {
     const obThis = this;
     document.addEventListener('input', (event) => {
-      const eventNode = event.currentTarget;
+      const eventNode = event.target;
       const searchInputNode = eventNode.closest(obThis.sSearchInput);
       if (!searchInputNode) {
         return;

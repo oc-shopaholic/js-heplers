@@ -20,7 +20,7 @@ export default class ShopaholicCouponAdd {
   init() {
     const obThis = this;
     document.addEventListener('click', (event) => {
-      const eventNode = event.currentTarget;
+      const eventNode = event.target;
       const buttonNode = eventNode.closest(`.${obThis.sButtonClass}`);
       const obInput = document.querySelector('[data-coupon]');
       if (!buttonNode || !buttonNode.hasAttributes('disabled') || !obInput || !obInput.value) {
@@ -30,7 +30,7 @@ export default class ShopaholicCouponAdd {
       obInput.setAttribute('disabled', 'disabled');
       buttonNode.setAttribute('disabled', 'disabled');
 
-      this.sendAjaxRequest(obInput.value, obInput, buttonNode);
+      obThis.sendAjaxRequest(obInput.value, obInput, buttonNode);
     });
   }
 

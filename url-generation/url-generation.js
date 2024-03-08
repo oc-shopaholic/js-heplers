@@ -3,27 +3,33 @@
  */
 export default new class UrlGeneration {
   constructor() {
-    this.sBaseURL = `${location.origin}${location.pathname}`;
+    this.baseURL = `${location.origin}${location.pathname}`;
     this.init();
   }
 
   init() {
-    this.sSearchString = window.location.search.substring(1);
-    this.obSearchParams = new URLSearchParams(this.sSearchString);
+    const searchString = window.location.search.substring(1);
+    this.obSearchParams = new URLSearchParams(searchString);
   }
 
   clear() {
     this.obSearchParams = new URLSearchParams();
 
-    history.pushState(null, null, `${this.sBaseURL}`);
+    history.pushState(null, null, `${this.baseURL}`);
   }
 
   update() {
-    const searchString = this.obSearchParams.toString();
-    if (searchString && searchString.length > 0) {
-      history.pushState(null, null, `${this.sBaseURL}?${this.sSearchString}`);
+    if (this.obSearchParams.size > 0) {
+      this.obSearchParams.sort();
+      const searchParams = [];
+      for (const [key, value] of this.obSearchParams.entries()) {
+        searchParams.push(`${key}=${value}`);
+      }
+      const searchString = searchParams.join('&');
+
+      history.pushState(null, null, `${this.baseURL}?${searchString}`);
     } else {
-      history.pushState(null, null, `${this.sBaseURL}`);
+      history.pushState(null, null, `${this.baseURL}`);
     }
   }
 

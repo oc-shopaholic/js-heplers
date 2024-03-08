@@ -3,14 +3,14 @@
  */
 export default class ShopaholicAddWishList {
   constructor() {
-    this.sDefaultButtonClass = '_shopaholic-add-wish-list-button';
-    this.sButtonSelector = `.${this.sDefaultButtonClass}`;
+    this.defaultButtonClass = '_shopaholic-add-wish-list-button';
+    this.buttonSelector = `.${this.defaultButtonClass}`;
 
-    this.sDefaultWrapperClass = '_shopaholic-product-wrapper';
-    this.sWrapperSelector = `.${this.sDefaultWrapperClass}`;
-    this.sAttributeName = 'data-product-id';
+    this.defaultWrapperClass = '_shopaholic-product-wrapper';
+    this.wrapperSelector = `.${this.defaultWrapperClass}`;
+    this.attributeName = 'data-product-id';
 
-    this.sComponentMethod = 'ProductList::onAddToWishList';
+    this.componentMethod = 'ProductList::onAddToWishList';
     this.obAjaxRequestCallback = null;
   }
 
@@ -20,14 +20,14 @@ export default class ShopaholicAddWishList {
   init() {
     const obThis = this;
     document.addEventListener('click', (event) => {
-      const eventNode = event.currentTarget;
-      const buttonNode = eventNode.closest(obThis.sButtonSelector);
-      const productWrapperNode = eventNode.closest(obThis.sWrapperSelector);
+      const eventNode = event.target;
+      const buttonNode = eventNode.closest(obThis.buttonSelector);
+      const productWrapperNode = eventNode.closest(obThis.wrapperSelector);
       if (!buttonNode || !productWrapperNode) {
         return;
       }
 
-      const iProductID = productWrapperNode.getAttribute(obThis.sAttributeName);
+      const iProductID = productWrapperNode.getAttribute(obThis.attributeName);
       if (!iProductID) {
         return;
       }
@@ -50,7 +50,7 @@ export default class ShopaholicAddWishList {
       obRequestData = this.obAjaxRequestCallback(obRequestData, obButton);
     }
 
-    oc.ajax(this.sComponentMethod, obRequestData);
+    oc.ajax(this.componentMethod, obRequestData);
   }
 
   /**
@@ -69,11 +69,11 @@ export default class ShopaholicAddWishList {
    * Redeclare default selector of "Add to wish list" button
    * Default value is ._shopaholic-add-wish-list-button
    *
-   * @param {string} sSelector
+   * @param {string} selector
    * @returns {ShopaholicAddWishList}
    */
-  setButtonSelector(sSelector) {
-    this.sButtonSelector = sSelector;
+  setButtonSelector(selector) {
+    this.buttonSelector = selector;
 
     return this;
   }
