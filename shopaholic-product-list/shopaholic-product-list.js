@@ -3,7 +3,7 @@
  */
 export default class ShopaholicProductList {
   constructor() {
-    this.sComponentMethod = 'onAjax';
+    this.componentMethod = 'onAjax';
     this.obAjaxRequestCallback = null;
   }
 
@@ -18,7 +18,7 @@ export default class ShopaholicProductList {
       obRequestData = this.obAjaxRequestCallback(obRequestData);
     }
 
-    oc.ajax(this.sComponentMethod, obRequestData);
+    oc.ajax(this.componentMethod, obRequestData);
   }
 
   /**

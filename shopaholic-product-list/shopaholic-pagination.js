@@ -9,12 +9,12 @@ export default class ShopaholicPagination {
    */
   constructor(obProductListHelper = null) {
     this.obProductListHelper = obProductListHelper;
-    this.sEventType = 'click';
-    this.sFiledName = 'page';
-    this.sAttributeName = 'data-page';
+    this.eventType = 'click';
+    this.filedName = 'page';
+    this.attributeName = 'data-page';
 
-    this.sDefaultButtonClass = '_shopaholic-pagination';
-    this.sButtonSelector = `.${this.sDefaultButtonClass}`;
+    this.defaultButtonClass = '_shopaholic-pagination';
+    this.buttonSelector = `.${this.defaultButtonClass}`;
   }
 
   /**
@@ -22,9 +22,9 @@ export default class ShopaholicPagination {
    */
   init() {
     const obThis = this;
-    document.addEventListener(this.sEventType, (event) => {
+    document.addEventListener(this.eventType, (event) => {
       const eventNode = event.target;
-      const buttonNode = eventNode.closest(obThis.sButtonSelector);
+      const buttonNode = eventNode.closest(obThis.buttonSelector);
       if (!buttonNode) {
         return;
       }
@@ -32,13 +32,13 @@ export default class ShopaholicPagination {
       event.preventDefault();
       event.stopPropagation();
 
-      const iPage = buttonNode.getAttribute(obThis.sAttributeName);
+      const iPage = buttonNode.getAttribute(obThis.attributeName);
       UrlGeneration.init();
 
       if (iPage === 1) {
-        UrlGeneration.remove(obThis.sFiledName);
+        UrlGeneration.remove(obThis.filedName);
       } else {
-        UrlGeneration.set(obThis.sFiledName, iPage);
+        UrlGeneration.set(obThis.filedName, iPage);
       }
 
       UrlGeneration.update();
@@ -54,11 +54,11 @@ export default class ShopaholicPagination {
    * Redeclare default selector of pagination button
    * Default value is "_shopaholic-pagination"
    *
-   * @param {string} sButtonSelector
+   * @param {string} buttonSelector
    * @returns {ShopaholicPagination}
    */
-  setButtonSelector(sButtonSelector) {
-    this.sButtonSelector = sButtonSelector;
+  setButtonSelector(buttonSelector) {
+    this.buttonSelector = buttonSelector;
 
     return this;
   }

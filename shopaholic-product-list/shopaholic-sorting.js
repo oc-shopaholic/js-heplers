@@ -9,11 +9,11 @@ export default class ShopaholicSorting {
    */
   constructor(obProductListHelper = null) {
     this.obProductListHelper = obProductListHelper;
-    this.sEventType = 'change';
-    this.sFiledName = 'sort';
+    this.eventType = 'change';
+    this.filedName = 'sort';
 
-    this.sDefaultSelectClass = '_shopaholic-sorting';
-    this.sSelectSelector = `.${this.sDefaultSelectClass}`;
+    this.defaultSelectClass = '_shopaholic-sorting';
+    this.selectSelector = `.${this.defaultSelectClass}`;
   }
 
   /**
@@ -21,15 +21,15 @@ export default class ShopaholicSorting {
    */
   init() {
     const obThis = this;
-    document.addEventListener(this.sEventType, (event) => {
+    document.addEventListener(this.eventType, (event) => {
       const eventNode = event.target;
-      const selectNode = eventNode.closest(obThis.sSelectSelector);
+      const selectNode = eventNode.closest(obThis.selectSelector);
       if (!selectNode) {
         return;
       }
 
       UrlGeneration.init();
-      UrlGeneration.set(obThis.sFiledName, selectNode.value);
+      UrlGeneration.set(obThis.filedName, selectNode.value);
       UrlGeneration.update();
       if (!obThis.obProductListHelper) {
         return;
