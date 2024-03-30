@@ -85,7 +85,7 @@ export default class ShopaholicFilterPanel {
 
       obInputNodeList.forEach((obInputNode) => {
         const sValue = obInputNode.value;
-        if (!sValue) {
+        if (!sValue && sFilterType !== 'between') {
           return;
         }
 

@@ -77,19 +77,19 @@ export default class ShopaholicFilterPrice {
 
     let fMinLimit = 0;
     let fMaxLimit = 0;
-    let fMinPrice = 0;
-    let fMaxPrice = 0;
+    let fMinPrice = null;
+    let fMaxPrice = null;
     let obMinInput = null;
     let obMaxInput = null;
     const obThis = this;
     obInputNodeList.forEach((obInputNode) => {
       if (obInputNode.getAttribute('name') === obThis.sInputMinPriceName) {
         fMinLimit = parseFloat(obInputNode.getAttribute('min'));
-        fMinPrice = obInputNode.value;
+        fMinPrice = obInputNode.value ? parseFloat(obInputNode.value) : null;
         obMinInput = obInputNode;
       } else if (obInputNode.getAttribute('name') === obThis.sInputMaxPriceName) {
         fMaxLimit = parseFloat(obInputNode.getAttribute('max'));
-        fMaxPrice = obInputNode.value;
+        fMaxPrice = obInputNode.value ? parseFloat(obInputNode.value) : null;
         obMaxInput = obInputNode;
       }
     });
