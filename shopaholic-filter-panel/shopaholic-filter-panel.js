@@ -9,13 +9,13 @@ export default class ShopaholicFilterPanel {
    */
   constructor(obProductListHelper = null) {
     this.obProductListHelper = obProductListHelper;
-    this.sEventType = 'change';
-    this.sFiledName = 'property';
-    this.sFilterType = 'data-filter-type';
-    this.sPropertyIDAttribute = 'data-property-id';
+    this.eventType = 'change';
+    this.fieldName = 'property';
+    this.filterType = 'data-filter-type';
+    this.propertyIDAttribute = 'data-property-id';
 
-    this.sDefaultWrapperClass = '_shopaholic-filter-wrapper';
-    this.sWrapperSelector = `.${this.sDefaultWrapperClass}`;
+    this.defaultWrapperClass = '_shopaholic-filter-wrapper';
+    this.wrapperSelector = `.${this.defaultWrapperClass}`;
   }
 
   /**
@@ -23,9 +23,9 @@ export default class ShopaholicFilterPanel {
    */
   init() {
     const obThis = this;
-    document.addEventListener(this.sEventType, (event) => {
+    document.addEventListener(this.eventType, (event) => {
       const eventNode = event.target;
-      const inputNode = eventNode.closest(obThis.sWrapperSelector);
+      const inputNode = eventNode.closest(obThis.wrapperSelector);
       if (!inputNode) {
         return;
       }
@@ -44,58 +44,58 @@ export default class ShopaholicFilterPanel {
   }
 
   prepareRequestData() {
-    const obFilterNodeList = document.querySelectorAll(this.sWrapperSelector);
-    if (obFilterNodeList.length === 0) {
+    const filterNodeList = document.querySelectorAll(this.wrapperSelector);
+    if (filterNodeList.length === 0) {
       return;
     }
 
     const obThis = this;
-    obFilterNodeList.forEach((obFilterNode) => {
+    filterNodeList.forEach((filterNode) => {
       //Get filter type
-      const sFilterType = obFilterNode.getAttribute(obThis.sFilterType);
-      const iPropertyID = obFilterNode.getAttribute(obThis.sPropertyIDAttribute);
+      const filterType = filterNode.getAttribute(obThis.filterType);
+      const propertyID = filterNode.getAttribute(obThis.propertyIDAttribute);
 
-      let sFieldName = `${this.sFiledName}`;
-      if (!sFilterType) {
+      let fieldName = `${this.fieldName}`;
+      if (!filterType) {
         return;
       }
 
-      if (iPropertyID) {
-        sFieldName += `[${iPropertyID}]`;
+      if (propertyID) {
+        fieldName += `[${propertyID}]`;
       }
 
-      let obInputNodeList = null;
-      let arValueList = [];
+      let inputNodeList = null;
+      let valueList = [];
 
-      if (sFilterType === 'between') {
-        obInputNodeList = obFilterNode.querySelectorAll('input');
-      } else if (sFilterType === 'checkbox' || sFilterType === 'switch') {
-        obInputNodeList = obFilterNode.querySelectorAll('input[type="checkbox"]:checked');
-      } else if (sFilterType === 'select' || sFilterType === 'select_between') {
-        obInputNodeList = obFilterNode.querySelectorAll('select');
-      } else if (sFilterType === 'radio') {
-        obInputNodeList = obFilterNode.querySelectorAll('input[type="radio"]:checked');
+      if (filterType === 'between') {
+        inputNodeList = filterNode.querySelectorAll('input');
+      } else if (filterType === 'checkbox' || filterType === 'switch') {
+        inputNodeList = filterNode.querySelectorAll('input[type="checkbox"]:checked');
+      } else if (filterType === 'select' || filterType === 'select_between') {
+        inputNodeList = filterNode.querySelectorAll('select');
+      } else if (filterType === 'radio') {
+        inputNodeList = filterNode.querySelectorAll('input[type="radio"]:checked');
       }
 
-      if (!obInputNodeList || obInputNodeList.length === 0) {
-        UrlGeneration.remove(sFieldName);
+      if (!inputNodeList || inputNodeList.length === 0) {
+        UrlGeneration.remove(fieldName);
 
         return;
       }
 
-      obInputNodeList.forEach((obInputNode) => {
-        const sValue = obInputNode.value;
-        if (!sValue && sFilterType !== 'between') {
+      inputNodeList.forEach((inputNode) => {
+        const inputValue = inputNode.value;
+        if (!inputValue && filterType !== 'between') {
           return;
         }
 
-        arValueList.push(sValue);
+        valueList.push(inputValue);
       });
 
-      if (!arValueList || arValueList.length === 0) {
-        UrlGeneration.remove(sFieldName);
+      if (!valueList || valueList.length === 0) {
+        UrlGeneration.remove(fieldName);
       } else {
-        UrlGeneration.set(sFieldName, arValueList);
+        UrlGeneration.set(fieldName, valueList);
       }
     });
   }
@@ -104,11 +104,11 @@ export default class ShopaholicFilterPanel {
    * Redeclare default selector of filter input
    * Default value is "_shopaholic-filter-wrapper"
    *
-   * @param {string} sWrapperSelector
+   * @param {string} wrapperSelector
    * @returns {ShopaholicFilterPanel}
    */
-  setWrapperSelector(sWrapperSelector) {
-    this.sWrapperSelector = sWrapperSelector;
+  setWrapperSelector(wrapperSelector) {
+    this.wrapperSelector = wrapperSelector;
 
     return this;
   }
@@ -117,11 +117,11 @@ export default class ShopaholicFilterPanel {
    * Redeclare default event type
    * Default value is "change"
    *
-   * @param {string} sEventType
+   * @param {string} eventType
    * @returns {ShopaholicFilterPanel}
    */
-  setEventType(sEventType) {
-    this.sEventType = sEventType;
+  setEventType(eventType) {
+    this.eventType = eventType;
 
     return this;
   }
@@ -130,11 +130,11 @@ export default class ShopaholicFilterPanel {
    * Redeclare default URL filed name
    * Default value is "property"
    *
-   * @param {string} sFieldName
+   * @param {string} fieldName
    * @returns {ShopaholicFilterPanel}
    */
-  setFieldName(sFieldName) {
-    this.sFiledName = sFieldName;
+  setFieldName(fieldName) {
+    this.fieldName = fieldName;
 
     return this;
   }

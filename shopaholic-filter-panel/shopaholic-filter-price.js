@@ -9,16 +9,16 @@ export default class ShopaholicFilterPrice {
    */
   constructor(obProductListHelper = null) {
     this.obProductListHelper = obProductListHelper;
-    this.sEventType = 'input';
-    this.sFiledName = 'price';
+    this.eventType = 'input';
+    this.filedName = 'price';
 
-    this.sInputMinPriceName = 'filter-min-price';
-    this.sInputMaxPriceName = 'filter-max-price';
+    this.inputMinPriceName = 'filter-min-price';
+    this.inputMaxPriceName = 'filter-max-price';
 
-    this.sDefaultInputClass = '_shopaholic-price-filter';
-    this.sInputSelector = `.${this.sDefaultInputClass}`;
+    this.defaultInputClass = '_shopaholic-price-filter';
+    this.inputSelector = `.${this.defaultInputClass}`;
 
-    this.iCallBackDelay = 400;
+    this.callBackDelay = 400;
   }
 
   /**
@@ -26,19 +26,19 @@ export default class ShopaholicFilterPrice {
    */
   init() {
     const obThis = this;
-    document.addEventListener(this.sEventType, (event) => {
+    document.addEventListener(this.eventType, (event) => {
       const eventNode = event.target;
-      const inputNode = eventNode.closest(obThis.sInputSelector);
+      const inputNode = eventNode.closest(obThis.inputSelector);
       if (!inputNode) {
         return;
       }
 
-      if (obThis.sEventType === 'input') {
+      if (obThis.eventType === 'input') {
         clearTimeout(obThis.timer);
 
         obThis.timer = setTimeout(() => {
           obThis.priceChangeCallBack();
-        }, obThis.iCallBackDelay);
+        }, obThis.callBackDelay);
       } else {
         obThis.priceChangeCallBack();
       }
@@ -46,7 +46,7 @@ export default class ShopaholicFilterPrice {
 
     document.addEventListener('input', (event) => {
       const eventNode = event.target;
-      const inputNode = eventNode.closest(obThis.sInputSelector);
+      const inputNode = eventNode.closest(obThis.inputSelector);
       if (!inputNode) {
         return;
       }
@@ -70,8 +70,8 @@ export default class ShopaholicFilterPrice {
 
   prepareRequestData() {
     // Get min price from filter input
-    const obInputNodeList = document.querySelectorAll(this.sInputSelector);
-    if (obInputNodeList === 0) {
+    const inputNodeList = document.querySelectorAll(this.inputSelector);
+    if (inputNodeList === 0) {
       return;
     }
 
@@ -79,38 +79,38 @@ export default class ShopaholicFilterPrice {
     let fMaxLimit = 0;
     let fMinPrice = null;
     let fMaxPrice = null;
-    let obMinInput = null;
-    let obMaxInput = null;
+    let minInputNode = null;
+    let maxInputNode = null;
     const obThis = this;
-    obInputNodeList.forEach((obInputNode) => {
-      if (obInputNode.getAttribute('name') === obThis.sInputMinPriceName) {
-        fMinLimit = parseFloat(obInputNode.getAttribute('min'));
-        fMinPrice = obInputNode.value ? parseFloat(obInputNode.value) : null;
-        obMinInput = obInputNode;
-      } else if (obInputNode.getAttribute('name') === obThis.sInputMaxPriceName) {
-        fMaxLimit = parseFloat(obInputNode.getAttribute('max'));
-        fMaxPrice = obInputNode.value ? parseFloat(obInputNode.value) : null;
-        obMaxInput = obInputNode;
+    inputNodeList.forEach((inputNode) => {
+      if (inputNode.getAttribute('name') === obThis.inputMinPriceName) {
+        fMinLimit = parseFloat(inputNode.getAttribute('min'));
+        fMinPrice = inputNode.value ? parseFloat(inputNode.value) : null;
+        minInputNode = inputNode;
+      } else if (inputNode.getAttribute('name') === obThis.inputMaxPriceName) {
+        fMaxLimit = parseFloat(inputNode.getAttribute('max'));
+        fMaxPrice = inputNode.value ? parseFloat(inputNode.value) : null;
+        maxInputNode = inputNode;
       }
     });
-    if (!obMinInput || !obMaxInput) {
+    if (!minInputNode || !maxInputNode) {
       return;
     }
 
     if (fMinPrice > 0 && fMinPrice < fMinLimit) {
       fMinPrice = fMinLimit;
-      obMinInput.value = fMinLimit;
+      minInputNode.value = fMinLimit;
     }
 
     if (fMaxPrice > 0 && fMaxPrice > fMaxLimit) {
       fMaxPrice = fMaxLimit;
-      obMaxInput.value = fMaxLimit;
+      maxInputNode.value = fMaxLimit;
     }
 
     if (fMinPrice === 0 && fMaxPrice === 0) {
-      UrlGeneration.remove(this.sFiledName);
+      UrlGeneration.remove(this.filedName);
     } else {
-      UrlGeneration.set(this.sFiledName, [fMinPrice, fMaxPrice]);
+      UrlGeneration.set(this.filedName, [fMinPrice, fMaxPrice]);
     }
   }
 
@@ -118,11 +118,11 @@ export default class ShopaholicFilterPrice {
    * Redeclare default selector of filter input
    * Default value is "_shopaholic-price-filter"
    *
-   * @param {string} sInputSelector
+   * @param {string} inputSelector
    * @returns {ShopaholicFilterPrice}
    */
-  setInputSelector(sInputSelector) {
-    this.sInputSelector = sInputSelector;
+  setInputSelector(inputSelector) {
+    this.inputSelector = inputSelector;
 
     return this;
   }
@@ -131,11 +131,11 @@ export default class ShopaholicFilterPrice {
    * Redeclare default event type
    * Default value is "change"
    *
-   * @param {string} sEventType
+   * @param {string} eventType
    * @returns {ShopaholicFilterPrice}
    */
-  setEventType(sEventType) {
-    this.sEventType = sEventType;
+  setEventType(eventType) {
+    this.eventType = eventType;
 
     return this;
   }
@@ -144,11 +144,11 @@ export default class ShopaholicFilterPrice {
    * Redeclare default input name with min price
    * Default value is "filter-min-price"
    *
-   * @param {string} sInputName
+   * @param {string} inputName
    * @returns {ShopaholicFilterPrice}
    */
-  setInputMinPriceName(sInputName) {
-    this.sInputMinPriceName = sInputName;
+  setInputMinPriceName(inputName) {
+    this.inputMinPriceName = inputName;
 
     return this;
   }
@@ -157,11 +157,11 @@ export default class ShopaholicFilterPrice {
    * Redeclare default input name with max price
    * Default value is "filter-max-price"
    *
-   * @param {string} sInputName
+   * @param {string} inputName
    * @returns {ShopaholicFilterPrice}
    */
-  setInputMaxPriceName(sInputName) {
-    this.sInputMaxPriceName = sInputName;
+  setInputMaxPriceName(inputName) {
+    this.inputMaxPriceName = inputName;
 
     return this;
   }
@@ -170,11 +170,11 @@ export default class ShopaholicFilterPrice {
    * Redeclare default URL filed name
    * Default value is "price"
    *
-   * @param {string} sFieldName
+   * @param {string} fieldName
    * @returns {ShopaholicFilterPrice}
    */
-  setFieldName(sFieldName) {
-    this.sFiledName = sFieldName;
+  setFieldName(fieldName) {
+    this.filedName = fieldName;
 
     return this;
   }
