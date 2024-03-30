@@ -7,9 +7,8 @@ import ShopaholicCartShippingType from "@oc-shopaholic/shopaholic-cart/shopaholi
  */
 export default class ShopaholicCouponAdd {
   constructor() {
-    this.sButtonClass = '_shopaholic-coupon-add';
-
-    this.sComponentMethod = 'Cart::onAddCoupon';
+    this.buttonClass = '_shopaholic-coupon-add';
+    this.componentMethod = 'Cart::onAddCoupon';
 
     this.obAjaxRequestCallback = null;
   }
@@ -21,26 +20,26 @@ export default class ShopaholicCouponAdd {
     const obThis = this;
     document.addEventListener('click', (event) => {
       const eventNode = event.target;
-      const buttonNode = eventNode.closest(`.${obThis.sButtonClass}`);
-      const obInput = document.querySelector('[data-coupon]');
-      if (!buttonNode || !buttonNode.hasAttributes('disabled') || !obInput || !obInput.value) {
+      const buttonNode = eventNode.closest(`.${obThis.buttonClass}`);
+      const inputNode = document.querySelector('[data-coupon]');
+      if (!buttonNode || !buttonNode.hasAttributes('disabled') || !inputNode || !inputNode.value) {
         return;
       }
 
-      obInput.setAttribute('disabled', 'disabled');
+      inputNode.setAttribute('disabled', 'disabled');
       buttonNode.setAttribute('disabled', 'disabled');
 
-      obThis.sendAjaxRequest(obInput.value, obInput, buttonNode);
+      obThis.sendAjaxRequest(inputNode.value, inputNode, buttonNode);
     });
   }
 
   /**
    * Send ajax request and add coupon
    * @param {string} sValue
-   * @param {object} obInput
-   * @param {object} obButton
+   * @param {object} inputNode
+   * @param {object} buttonNode
    */
-  sendAjaxRequest(sValue, obInput, obButton) {
+  sendAjaxRequest(sValue, inputNode, buttonNode) {
     const obShippingType = new ShopaholicCartShippingType();
 
     let obRequestData = {
@@ -49,35 +48,35 @@ export default class ShopaholicCouponAdd {
         shipping_type_id: obShippingType.getShippingTypeID(),
       },
       complete: ({ responseJSON }) => {
-        this.completeCallback(responseJSON, obInput, obButton);
+        this.completeCallback(responseJSON, inputNode, buttonNode);
       },
     };
 
     if (this.obAjaxRequestCallback !== null) {
-      obRequestData = this.obAjaxRequestCallback(obRequestData, obInput, obButton);
+      obRequestData = this.obAjaxRequestCallback(obRequestData, inputNode, buttonNode);
     }
 
-    oc.ajax(this.sComponentMethod, obRequestData);
+    oc.ajax(this.componentMethod, obRequestData);
   }
 
   /**
    * Remove disabled attribute from button and input
    * Update cart data in ShopaholicCart object
    * @param {object} obResponse
-   * @param {object} obInput
-   * @param {object} obButton
+   * @param {object} inputNode
+   * @param {object} buttonNode
    */
-  completeCallback(obResponse, obInput, obButton) {
+  completeCallback(obResponse, inputNode, buttonNode) {
     const {data: obCartData, status: bStatus} = obResponse;
 
     ShopaholicCart.instance().updateCartData(obCartData);
 
-    if (obButton) {
-      obButton.removeAttribute('disabled');
+    if (buttonNode) {
+      buttonNode.removeAttribute('disabled');
     }
 
-    if (!bStatus && obInput) {
-      obInput.removeAttribute('disabled');
+    if (!bStatus && inputNode) {
+      inputNode.removeAttribute('disabled');
     }
   }
 

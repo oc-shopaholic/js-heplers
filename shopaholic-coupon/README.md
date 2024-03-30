@@ -42,14 +42,14 @@ const obShopaholicCouponRemove = new ShopaholicCouponRemove();
 
 
 obShopaholicCouponAdd
-.setAjaxRequestCallback(function(obRequestData, obInput, obButton) {
+.setAjaxRequestCallback(function(obRequestData, inputNode, buttonNode) {
   obRequestData.loading = '.preloader';
 
   return obRequestData;
 })
 .init();
 obShopaholicCouponRemove
-.setAjaxRequestCallback(function(obRequestData, obInput, obButton) {
+.setAjaxRequestCallback(function(obRequestData, inputNode, buttonNode) {
   obRequestData.loading = '.preloader';
 
   return obRequestData;
