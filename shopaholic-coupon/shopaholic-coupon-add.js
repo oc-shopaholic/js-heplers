@@ -2,7 +2,6 @@ import ShopaholicCart from "@oc-shopaholic/shopaholic-cart/shopaholic-cart";
 import ShopaholicCartShippingType from "@oc-shopaholic/shopaholic-cart/shopaholic-cart-shipping-type";
 
 /**
- * @author  Uladzimir Ambrazhey, <v.ambrazhey@oc-shopaholic.com>, LOVATA Group
  * @author  Andrei Kharanenka, a.kharanenka@lovata.com, LOVATA Group
  */
 export default class ShopaholicCouponAdd {

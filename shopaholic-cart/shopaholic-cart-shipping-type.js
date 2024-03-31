@@ -1,17 +1,14 @@
 import ShopaholicCart from "@oc-shopaholic/shopaholic-cart/shopaholic-cart";
 
 /**
- * @author  Uladzimir Ambrazhey, <v.ambrazhey@oc-shopaholic.com>, LOVATA Group
  * @author  Andrei Kharanenka, a.kharanenka@lovata.com, LOVATA Group
  */
 export default class ShopaholicCartShippingType {
   constructor() {
-    this.sDefaultInputName = 'shipping_type_id';
-
     this.obAjaxRequestCallback = null;
     this.iRadix = 10;
 
-    this.sComponentMethod = 'Cart::onSetShippingType';
+    this.componentMethod = 'Cart::onSetShippingType';
 
     ShopaholicCart.instance();
   }
@@ -23,7 +20,7 @@ export default class ShopaholicCartShippingType {
     const obThis = this;
     document.addEventListener('change', (event) => {
       const eventNode = event.target;
-      const inputNode = eventNode.closest(`[name="${obThis.sDefaultInputName}"]`);
+      const inputNode = eventNode.closest('[name="shipping_type_id"]');
       if (!inputNode) {
         return;
       }
@@ -36,12 +33,9 @@ export default class ShopaholicCartShippingType {
    * Send ajax request and update prices with new shipping-type-id
    */
   sendAjaxRequest(obInput) {
-
-    const iShippingTypeID = this.getShippingTypeID();
-
     let obRequestData = {
       data: {
-        'shipping_type_id': iShippingTypeID,
+        'shipping_type_id': this.getShippingTypeID(),
       },
       complete: ({responseJSON}) => {
         this.completeCallback(responseJSON);
@@ -52,7 +46,7 @@ export default class ShopaholicCartShippingType {
       obRequestData = this.obAjaxRequestCallback(obRequestData, obInput);
     }
 
-    oc.ajax(this.sComponentMethod, obRequestData);
+    oc.ajax(this.componentMethod, obRequestData);
   }
 
   /**
@@ -60,32 +54,23 @@ export default class ShopaholicCartShippingType {
    * @returns {null|number}
    */
   getShippingTypeID() {
-    let iShippingTypeID = null;
-    const obInputList = document.querySelectorAll(`[name=${this.sDefaultInputName}]`);
-    if (!obInputList || obInputList.length === 0) {
-      return iShippingTypeID;
+    let inputNode = document.querySelector('[name="shipping_type_id"]');
+    if (this.isRadioInput(inputNode)) {
+      inputNode = document.querySelector('[name="shipping_type_id"]:checked');
     }
 
-    const isRadio = this.getInputType(obInputList);
-    if (isRadio) {
-      const obInputNode = [...obInputList].filter(node => node.checked);
-
-      iShippingTypeID = parseInt(obInputNode[0].value, this.iRadix);
-    } else {
-      iShippingTypeID = parseInt(obInputList[0].value, this.iRadix);
+    if (!inputNode) {
+      return null;
     }
 
-    return  iShippingTypeID;
+    return parseInt(inputNode.value, this.iRadix);
   }
 
   /**
-   * Detect type of input with offer id
+   * Returns true, if input type is "radio"
    */
-  getInputType(obInputList) {
-    const firstNode = obInputList[0];
-    const {type: sType} = firstNode;
-
-    return sType === 'radio';
+  isRadioInput(inputNode) {
+    return inputNode && inputNode.type === 'radio';
   }
 
   /**

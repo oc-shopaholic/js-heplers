@@ -1,31 +1,23 @@
 /**
- * @author  Andrei Kharanenka, <a.kharanenka@lovata.com>, LOVATA Group,
- * @author  Uladzimir Ambrazhey, <v.ambrazhey@oc-shopaholic.com>, LOVATA Group
+ * @author  Andrei Kharanenka, <a.kharanenka@lovata.com>, LOVATA Group
  */
 export default class ShopaholicCartPosition {
-  constructor(obButton) {
-    this.sDefaultWrapperClass = '_shopaholic-product-wrapper';
-    this.sWrapperSelector = `.${this.sDefaultWrapperClass}`;
+  constructor(positionNode) {
+    this.defaultWrapperClass = '_shopaholic-product-wrapper';
+    this.wrapperSelector = `.${this.defaultWrapperClass}`;
 
-    this.sPositionIDAttr = 'data-position-id';
-    this.sOfferIDAttr = 'offer_id';
-    this.sQuantityAttr = 'quantity';
+    this.wrapperNode = positionNode.closest(`${this.wrapperSelector}`);
 
-    this.obButton = obButton;
-    this.obProductCart = obButton.closest(`${this.sWrapperSelector}`);
-
-    this.iPositionID = null;
-    this.iOfferID = null;
-    this.iQuantity = 1;
-    this.obProperty = {};
+    this.positionID = null;
+    this.offerID = null;
+    this.quantity = 1;
+    this.propertyList = {};
     this.iRadix = 10;
 
     this.eventName = 'shopaholic.cart.position.extend';
-    if (!this.obProductCart) {
+    if (!this.wrapperNode) {
       throw new Error('Product wrapper is empty. It mast contain product card node');
     }
-
-    this.referenceType = 'radio';
 
     this.initOfferID();
     this.initQuantity();
@@ -36,8 +28,8 @@ export default class ShopaholicCartPosition {
    * Get cart position node
    * @returns {*}
    */
-  getNode() {
-    return this.obProductCart;
+  getWrapperNode() {
+    return this.wrapperNode;
   }
 
   /**
@@ -46,12 +38,19 @@ export default class ShopaholicCartPosition {
    */
   getData() {
     let obData = {
-      id: this.iPositionID,
-      offer_id: this.iOfferID,
-      quantity: this.iQuantity,
-      property: this.obProperty
+      id: this.positionID,
+      offer_id: this.offerID,
+      quantity: this.quantity,
+      property: this.propertyList
     };
-    document.dispatchEvent(this.createCustomEvent(obData));
+    document.dispatchEvent(new CustomEvent(this.eventName, {
+      bubbles: true,
+      cancelable: true,
+      detail: {
+        data: obData,
+        position: this,
+      },
+    }));
 
     return obData;
   }
@@ -61,7 +60,7 @@ export default class ShopaholicCartPosition {
    * @returns {int}
    */
   getPositionID() {
-    return this.iPositionID;
+    return this.positionID;
   }
 
   /**
@@ -69,82 +68,53 @@ export default class ShopaholicCartPosition {
    * @returns {int}
    */
   getQuantity() {
-    return this.iQuantity;
+    return this.quantity;
   }
 
   /**
    * Get quantity input node
-   * @returns {node}
+   * @returns {Element}
    */
   getQuantityInput() {
-    return this.obProductCart.querySelector(`[name=${this.sQuantityAttr}]`);
+    return this.wrapperNode.querySelector(`[name="quantity"]`);
   }
 
   /**
    * Get offer ID from input
    */
   initOfferID() {
-    const obOfferIDNodeCollection = this.obProductCart.querySelectorAll(`[name=${this.sOfferIDAttr}]`);
-    if (!obOfferIDNodeCollection || obOfferIDNodeCollection.length === 0) {
+    let offerInputNode = this.wrapperNode.querySelector('[name="offer_id"]');
+    if (this.isRadioInput(offerInputNode)) {
+      offerInputNode = this.wrapperNode.querySelector('[name="offer_id"]:checked');
+    }
+
+    if (!offerInputNode) {
       return;
     }
 
-    const isRadio = this.getOfferIDInputType(obOfferIDNodeCollection);
-    if (isRadio) {
-      const obOfferIDNode = [...obOfferIDNodeCollection].filter(node => node.checked);
-
-      this.iOfferID = parseInt(obOfferIDNode[0].value, this.iRadix);
-    } else {
-      this.iOfferID = parseInt(obOfferIDNodeCollection[0].value, this.iRadix);
-    }
+    this.offerID = parseInt(offerInputNode.value, this.iRadix);
   }
 
   /**
-   * Detect type of input with offer id
+   * Returns true, if input type is "radio"
    */
-  getOfferIDInputType(obOfferIDNodeCollection) {
-    const firstNode = obOfferIDNodeCollection[0];
-    const { type: sType } = firstNode;
-
-    return sType === this.referenceType;
+  isRadioInput(inputNode) {
+    return inputNode && inputNode.type === 'radio';
   }
 
   /**
    * Get offer quantity from cart object
    */
   initQuantity() {
-    const obQuantityInput = this.getQuantityInput();
-    if (!obQuantityInput) {
-      return;
-    }
-
-    this.iQuantity = parseInt(obQuantityInput.value, this.iRadix);
+    const quantityInputNode = this.getQuantityInput();
+    this.quantity = quantityInputNode ? parseInt(quantityInputNode.value, this.iRadix) : 0;
   }
 
   /**
    * Get offer quantity from cart object
    */
   initCartPositionID() {
-    const sValue = this.obProductCart.getAttribute(`${this.sPositionIDAttr}`);
-    if (!sValue) {
-      return;
-    }
-
-    this.iPositionID = parseInt(sValue, this.iRadix);
-  }
-
-  /**
-   * Create event
-   * @param options
-   * @returns {CustomEvent<any>}
-   */
-  createCustomEvent(options) {
-    const event = new CustomEvent(this.eventName, {
-      bubbles: true,
-      cancelable: true,
-      detail: options,
-    });
-
-    return event;
+    const positionID = this.wrapperNode.dataset.positionId;
+    this.positionID = positionID ? parseInt(positionID, this.iRadix) : null;
   }
 }

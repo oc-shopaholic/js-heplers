@@ -3,18 +3,17 @@ import ShopaholicCart from "@oc-shopaholic/shopaholic-cart/shopaholic-cart";
 import ShopaholicCartShippingType from "@oc-shopaholic/shopaholic-cart/shopaholic-cart-shipping-type";
 
 /**
- * @author  Uladzimir Ambrazhey, <v.ambrazhey@oc-shopaholic.com>, LOVATA Group
  * @author  Andrei Kharanenka, a.kharanenka@lovata.com, LOVATA Group
  */
 export default class ShopaholicCartUpdate {
   constructor() {
-    this.sDefaultInputClass = '_shopaholic-cart-quantity';
-    this.sIncreaseInputClass = '_shopaholic-cart-increase-quantity';
-    this.sDecreaseInputClass = '_shopaholic-cart-decrease-quantity';
-    this.sUpdateComponentMethod = 'Cart::onUpdate';
+    this.defaultInputClass = '_shopaholic-cart-quantity';
+    this.increaseInputClass = '_shopaholic-cart-increase-quantity';
+    this.decreaseInputClass = '_shopaholic-cart-decrease-quantity';
+    this.updateComponentMethod = 'Cart::onUpdate';
     this.obAjaxRequestCallback = null;
 
-    this.iDelayBeforeRequest = 400;
+    this.delayBeforeRequest = 400;
     this.obTimer = null;
 
     ShopaholicCart.instance();
@@ -36,7 +35,7 @@ export default class ShopaholicCartUpdate {
     const obThis = this;
     document.addEventListener('input', (event) => {
       const eventNode = event.target;
-      const inputNode = eventNode.closest(`.${obThis.sDefaultInputClass}`);
+      const inputNode = eventNode.closest(`.${obThis.defaultInputClass}`);
       if (!inputNode) {
         return;
       }
@@ -58,7 +57,7 @@ export default class ShopaholicCartUpdate {
         }
 
         obThis.sendAjaxRequest(inputNode);
-      }, obThis.iDelayBeforeRequest);
+      }, obThis.delayBeforeRequest);
     });
   }
 
@@ -69,7 +68,7 @@ export default class ShopaholicCartUpdate {
     const obThis = this;
     document.addEventListener('click', (event) => {
       const eventNode = event.target;
-      const buttonNode = eventNode.closest(`.${obThis.sIncreaseInputClass}`);
+      const buttonNode = eventNode.closest(`.${obThis.increaseInputClass}`);
       if (!buttonNode || buttonNode.hasAttribute('disabled')) {
         return;
       }
@@ -79,14 +78,14 @@ export default class ShopaholicCartUpdate {
       }
 
       const obCartPosition = new ShopaholicCartPosition(buttonNode);
-      const obInput = obCartPosition.getQuantityInput();
-      const iMaxQuantity = obThis.getMaxQuantity(obInput);
-      let iQuantity = obThis.getQuantity(obInput) + 1;
+      const inputNode = obCartPosition.getQuantityInput();
+      const iMaxQuantity = obThis.getMaxQuantity(inputNode);
+      let iQuantity = obThis.getQuantity(inputNode) + 1;
       if (iQuantity > iMaxQuantity) {
         return;
       }
 
-      obInput.value = iQuantity;
+      inputNode.value = iQuantity;
       if (iQuantity === iMaxQuantity) {
         buttonNode.setAttribute('disabled', 'disabled');
       } else {
@@ -94,16 +93,16 @@ export default class ShopaholicCartUpdate {
       }
 
       if (iQuantity > 1) {
-        const obCartNode = obCartPosition.getNode();
-        const obDecreaseButton = obCartNode.querySelector(`.${obThis.sDecreaseInputClass}`);
-        if (obDecreaseButton) {
-          obDecreaseButton.removeAttribute('disabled');
+        const obCartNode = obCartPosition.getWrapperNode();
+        const decreaseButtonNode = obCartNode.querySelector(`.${obThis.decreaseInputClass}`);
+        if (decreaseButtonNode) {
+          decreaseButtonNode.removeAttribute('disabled');
         }
       }
 
       obThis.obTimer = setTimeout(() => {
-        obThis.sendAjaxRequest(obInput);
-      }, obThis.iDelayBeforeRequest);
+        obThis.sendAjaxRequest(inputNode);
+      }, obThis.delayBeforeRequest);
     });
   }
 
@@ -114,7 +113,7 @@ export default class ShopaholicCartUpdate {
     const obThis = this;
     document.addEventListener('click', (event) => {
       const eventNode = event.target;
-      const buttonNode = eventNode.closest(`.${obThis.sDecreaseInputClass}`);
+      const buttonNode = eventNode.closest(`.${obThis.decreaseInputClass}`);
       if (!buttonNode || buttonNode.hasAttribute('disabled')) {
         return;
       }
@@ -124,14 +123,14 @@ export default class ShopaholicCartUpdate {
       }
 
       const obCartPosition = new ShopaholicCartPosition(buttonNode);
-      const obInput = obCartPosition.getQuantityInput();
-      const iMaxQuantity = obThis.getMaxQuantity(obInput);
-      let iQuantity = obThis.getQuantity(obInput) - 1;
+      const inputNode = obCartPosition.getQuantityInput();
+      const iMaxQuantity = obThis.getMaxQuantity(inputNode);
+      let iQuantity = obThis.getQuantity(inputNode) - 1;
       if (iQuantity < 1) {
         return;
       }
 
-      obInput.value = iQuantity;
+      inputNode.value = iQuantity;
       if (iQuantity === 1) {
         buttonNode.setAttribute('disabled', 'disabled');
       } else {
@@ -139,29 +138,29 @@ export default class ShopaholicCartUpdate {
       }
 
       if (iQuantity < iMaxQuantity) {
-        const obCartNode = obCartPosition.getNode();
-        const obIncreaseButton = obCartNode.querySelector(`.${obThis.sIncreaseInputClass}`);
-        if (obIncreaseButton) {
-          obIncreaseButton.removeAttribute('disabled');
+        const obCartNode = obCartPosition.getWrapperNode();
+        const increaseButtonNode = obCartNode.querySelector(`.${obThis.increaseInputClass}`);
+        if (increaseButtonNode) {
+          increaseButtonNode.removeAttribute('disabled');
         }
       }
 
       obThis.obTimer = setTimeout(() => {
-        obThis.sendAjaxRequest(obInput);
-      }, obThis.iDelayBeforeRequest);
+        obThis.sendAjaxRequest(inputNode);
+      }, obThis.delayBeforeRequest);
     });
   }
 
   /**
    * Update position data
-   * @param {node} obInput
+   * @param {node} inputNode
    */
-  sendAjaxRequest(obInput) {
-    if (!obInput) {
+  sendAjaxRequest(inputNode) {
+    if (!inputNode) {
       throw new Error('Input node is empty.');
     }
 
-    const obCartPosition = new ShopaholicCartPosition(obInput);
+    const obCartPosition = new ShopaholicCartPosition(inputNode);
     let obPositionData = obCartPosition.getData();
     const obShippingType = new ShopaholicCartShippingType();
 
@@ -176,21 +175,21 @@ export default class ShopaholicCartUpdate {
     };
 
     if (this.obAjaxRequestCallback !== null) {
-      obRequestData = this.obAjaxRequestCallback(obRequestData, obInput);
+      obRequestData = this.obAjaxRequestCallback(obRequestData, inputNode);
     }
 
-    oc.ajax(this.sUpdateComponentMethod, obRequestData);
+    oc.ajax(this.updateComponentMethod, obRequestData);
   }
 
-  getQuantity(obInput) {
-    return parseInt(obInput.value, this.iRadix);
+  getQuantity(inputNode) {
+    return parseInt(inputNode.value, this.iRadix);
   }
 
   /**
    * Get offer quantity from cart object
    */
-  getMaxQuantity(obInput) {
-    return parseInt(obInput.getAttribute('max'), this.iRadix);
+  getMaxQuantity(inputNode) {
+    return parseInt(inputNode.getAttribute('max'), this.iRadix);
   }
 
   /**

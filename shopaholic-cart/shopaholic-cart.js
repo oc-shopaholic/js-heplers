@@ -6,30 +6,29 @@ import ShopaholicCartPosition from "@oc-shopaholic/shopaholic-cart/shopaholic-ca
 export default class ShopaholicCart {
   constructor() {
     /* Selectors */
-    this.sOfferItemType = 'Lovata\\Shopaholic\\Models\\Offer';
+    this.offerItemType = 'Lovata\\Shopaholic\\Models\\Offer';
 
     /* Params */
-    this.sGetDataHandler = 'Cart::onGetData';
+    this.componentHandler = 'Cart::onGetData';
     this.iRadix = 10;
 
-    this.sNodeClass = '_shopaholic-cart';
-    this.sOldPriceClass = '_shopaholic-old-price';
-    this.sHideOldPriceClass = '_shopaholic-hide-old-price';
-    this.sGroupAttribute = 'data-group';
-    this.sFieldAttribute = 'data-field';
+    this.wrapperNodeClass = '_shopaholic-cart';
+    this.oldPriceNodeClass = '_shopaholic-old-price';
+    this.hideOldPriceClass = '_shopaholic-hide-old-price';
+    this.groupAttributeName = 'data-group';
+    this.fieldAttributeName = 'data-field';
 
     this.obCartData = null;
   }
 
   /**
    * Init singleton object of ShopaholicCart
-   * @param {object} obRequestData
    * @returns {ShopaholicCart}
    */
-  static instance(obRequestData = null) {
+  static instance() {
     if (window.ShopaholicCart === undefined) {
       window.ShopaholicCart = new ShopaholicCart();
-      window.ShopaholicCart.init(obRequestData);
+      window.ShopaholicCart.init();
     }
 
     return window.ShopaholicCart;
@@ -38,21 +37,26 @@ export default class ShopaholicCart {
   /**
    * Init cart data object if it is empty
    */
-  init(obRequestData) {
+  init() {
     if (this.obCartData !== null) {
       return;
     }
 
-    let obData = {};
-    if (!!obRequestData) {
-      obData = obRequestData;
-    }
+    const obThis = this;
+    oc.ajax(this.componentHandler, {
+      complete: ({responseJSON}) => {
+        obThis.obCartData = responseJSON;
+        obThis.dispatchUpdateEvent();
+      },
+    });
+  }
 
-    obData.complete = ({responseJSON}) => {
-      this.obCartData = responseJSON;
-    };
-
-    oc.ajax(this.sGetDataHandler, obData);
+  dispatchUpdateEvent() {
+    document.dispatchEvent(new CustomEvent('shopaholic-cart:update', {
+      detail: {
+        cart: this.obCartData,
+      }
+    }));
   }
 
   /**
@@ -61,8 +65,7 @@ export default class ShopaholicCart {
    */
   updateCartData(obCartData) {
     this.obCartData = obCartData;
-
-    this.renderPriceFields();
+    this.dispatchUpdateEvent();
   }
 
   /**
@@ -71,12 +74,8 @@ export default class ShopaholicCart {
    * @param {object} obOfferProperty
    */
   getOfferQuantity(iOfferID, obOfferProperty) {
-    let iQuantity = 0;
-    const obCartPosition = this.findCartPositionByOfferID(iOfferID, this.sOfferItemType, obOfferProperty);
-
-    if (!!obCartPosition) {
-      iQuantity = obCartPosition.quantity;
-    }
+    const obCartPosition = this.findCartPositionByOfferID(iOfferID, this.offerItemType, obOfferProperty);
+    const iQuantity = obCartPosition ? obCartPosition.quantity : 0;
 
     return parseInt(iQuantity, this.iRadix);
   }
@@ -88,11 +87,8 @@ export default class ShopaholicCart {
    */
   getOfferPositionField(iPositionID, sField) {
     const obCartPosition = this.findCartPositionByID(iPositionID);
-    if (!!obCartPosition && !!obCartPosition[sField]) {
-      return obCartPosition[sField];
-    }
 
-    return null;
+    return obCartPosition && obCartPosition[sField] ? obCartPosition[sField] : null;
   }
 
   /**
@@ -116,26 +112,23 @@ export default class ShopaholicCart {
    */
   findCartPositionByOfferID(iItemID, sItemType, obOfferProperty) {
     iItemID = parseInt(iItemID, 10);
-    let obPosition = null;
-
-    if (!this.obCartData || !this.obCartData.position) {
-      return;
+    if (!this.obCartData || !this.obCartData.position || !iItemID) {
+      return null;
     }
 
     const obPositionList = this.obCartData.position;
     const arCartPositionIDList = Object.keys(obPositionList);
     for (let iKey of arCartPositionIDList) {
       let obPositionItem = obPositionList[iKey];
-      if (obPositionItem.item_id != iItemID || obPositionItem.item_type != sItemType
-        || JSON.stringify(obPositionItem.property) != JSON.stringify(obOfferProperty)) {
+      if (obPositionItem.item_id !== iItemID || obPositionItem.item_type !== sItemType
+        || JSON.stringify(obPositionItem.property) !== JSON.stringify(obOfferProperty)) {
         continue;
       }
 
-      obPosition = obPositionItem;
-      break;
+      return obPositionItem;
     }
 
-    return obPosition;
+    return null;
   }
 
   /**
@@ -144,33 +137,28 @@ export default class ShopaholicCart {
    */
   findCartPositionByID(iPositionID) {
     iPositionID = parseInt(iPositionID, 10);
-    let obPosition = null;
-
-    if (!this.obCartData || !this.obCartData.position) {
-      return;
+    if (!this.obCartData || !this.obCartData.position || !iPositionID) {
+      return null;
     }
 
     const obPositionList = this.obCartData.position;
-    if (!!obPositionList[iPositionID]) {
-      return obPositionList[iPositionID];
-    }
 
-    return obPosition;
+    return obPositionList && obPositionList[iPositionID] ? obPositionList[iPositionID] : null;
   }
 
   /**
    * Find price fields and update price values
    */
   renderPriceFields() {
-    const obNodeList = document.querySelectorAll(`.${this.sNodeClass}`);
+    const obNodeList = document.querySelectorAll(`.${this.wrapperNodeClass}`);
     if (!obNodeList || obNodeList.length === 0) {
       return;
     }
 
     obNodeList.forEach((obPriceNode) => {
-      const sGroupOriginal = obPriceNode.getAttribute(this.sGroupAttribute);
+      const sGroupOriginal = obPriceNode.getAttribute(this.groupAttributeName);
       const sGroup = !!sGroupOriginal ? sGroupOriginal.replace(/-/g, '_').toLowerCase() : sGroupOriginal;
-      const sFieldOriginal = obPriceNode.getAttribute(this.sFieldAttribute);
+      const sFieldOriginal = obPriceNode.getAttribute(this.fieldAttributeName);
       const sField = !!sFieldOriginal? sFieldOriginal.replace(/-/g, '_').toLowerCase() : sFieldOriginal;
       let sNewValue = '';
 
@@ -204,8 +192,8 @@ export default class ShopaholicCart {
     }
 
     const iPositionID = obCartPosition.getPositionID();
-    const obCartNode = obCartPosition.getNode();
-    const obOldPriceNodeList = obCartNode.querySelectorAll(`.${this.sOldPriceClass}[data-group="${sGroupOriginal}"][data-field="${sFieldOriginal}"]`);
+    const obCartNode = obCartPosition.getWrapperNode();
+    const obOldPriceNodeList = obCartNode.querySelectorAll(`.${this.oldPriceNodeClass}[data-group="${sGroupOriginal}"][data-field="${sFieldOriginal}"]`);
     if (!obOldPriceNodeList || obOldPriceNodeList.length === 0) {
       return;
     }
@@ -214,9 +202,9 @@ export default class ShopaholicCart {
 
     obOldPriceNodeList.forEach((obOldPriceNode) => {
       if (fDiscountPrice > 0) {
-        obOldPriceNode.classList.remove(this.sHideOldPriceClass);
+        obOldPriceNode.classList.remove(this.hideOldPriceClass);
       } else {
-        obOldPriceNode.classList.add(this.sHideOldPriceClass);
+        obOldPriceNode.classList.add(this.hideOldPriceClass);
       }
     });
   }
@@ -233,7 +221,7 @@ export default class ShopaholicCart {
       return;
     }
 
-    const obOldPriceNodeList = document.querySelectorAll(`.${this.sOldPriceClass}[data-group="${sGroupOriginal}"][data-field="${sFieldOriginal}"]`);
+    const obOldPriceNodeList = document.querySelectorAll(`.${this.oldPriceNodeClass}[data-group="${sGroupOriginal}"][data-field="${sFieldOriginal}"]`);
     if (!obOldPriceNodeList || obOldPriceNodeList.length === 0) {
       return;
     }
@@ -242,9 +230,9 @@ export default class ShopaholicCart {
 
     obOldPriceNodeList.forEach((obOldPriceNode) => {
       if (fDiscountPrice > 0) {
-        obOldPriceNode.classList.remove(this.sHideOldPriceClass);
+        obOldPriceNode.classList.remove(this.hideOldPriceClass);
       } else {
-        obOldPriceNode.classList.add(this.sHideOldPriceClass);
+        obOldPriceNode.classList.add(this.hideOldPriceClass);
       }
     });
   }
