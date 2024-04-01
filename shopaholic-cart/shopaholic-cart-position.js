@@ -11,7 +11,7 @@ export default class ShopaholicCartPosition {
     this.positionID = null;
     this.offerID = null;
     this.quantity = 1;
-    this.propertyList = {};
+    this.propertyList = null;
     this.iRadix = 10;
 
     this.eventName = 'shopaholic.cart.position.extend';

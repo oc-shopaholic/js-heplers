@@ -33,12 +33,13 @@ export default class ShopaholicCartShippingType {
    * Send ajax request and update prices with new shipping-type-id
    */
   sendAjaxRequest(obInput) {
+    const obThis = this;
     let obRequestData = {
       data: {
         'shipping_type_id': this.getShippingTypeID(),
       },
-      complete: ({responseJSON}) => {
-        this.completeCallback(responseJSON);
+      complete: (response) => {
+        obThis.completeCallback(response);
       },
     };
 

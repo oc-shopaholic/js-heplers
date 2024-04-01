@@ -164,13 +164,14 @@ export default class ShopaholicCartUpdate {
     let obPositionData = obCartPosition.getData();
     const obShippingType = new ShopaholicCartShippingType();
 
+    const obThis = this;
     let obRequestData = {
       data: {
         cart: [obPositionData],
         'shipping_type_id': obShippingType.getShippingTypeID()
       },
-      complete: ({responseJSON}) => {
-        this.completeCallback(responseJSON);
+      complete: (response) => {
+        obThis.completeCallback(response);
       },
     };
 

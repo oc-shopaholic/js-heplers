@@ -52,17 +52,16 @@ export default class ShopaholicCartAdd {
     const obOfferProperty = obPositionData.property;
     const iCartQuantity = ShopaholicCart.instance().getOfferQuantity(iOfferID, obOfferProperty);
 
-    if (addType === 'default') {
-      obPositionData.quantity += iCartQuantity;
-    }
+    obPositionData.quantity = addType === 'default' ? obPositionData.quantity + iCartQuantity : iCartQuantity;
 
+    const obThis = this;
     let obRequestData = {
       data: {
         cart: [obPositionData],
         'shipping_type_id': obShippingType.getShippingTypeID()
       },
-      complete: ({responseJSON}) => {
-        this.completeCallback(responseJSON, buttonNode);
+      complete: (response) => {
+        obThis.completeCallback(response, buttonNode);
       },
     };
 
@@ -70,7 +69,7 @@ export default class ShopaholicCartAdd {
       obRequestData = this.obAjaxRequestCallback(obRequestData, buttonNode);
     }
 
-    const ajaxHandler = addType === 'default' ? this.updateComponentMethod : this.addComponentMethod;
+    const ajaxHandler = addType === 'default' && iCartQuantity > 0 ? this.updateComponentMethod : this.addComponentMethod;
 
     oc.ajax(ajaxHandler, obRequestData);
   }

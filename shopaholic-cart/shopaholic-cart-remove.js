@@ -44,14 +44,15 @@ export default class ShopaholicCartRemove {
     const iPositionID = obCartPosition.getPositionID();
     const obShippingType = new ShopaholicCartShippingType();
 
+    const obThis = this;
     let obRequestData = {
       data: {
         cart: [iPositionID],
         type: 'position',
         'shipping_type_id': obShippingType.getShippingTypeID()
       },
-      complete: ({responseJSON}) => {
-        this.completeCallback(responseJSON, buttonNode);
+      complete: (response) => {
+        obThis.completeCallback(response, buttonNode);
       },
     };
 

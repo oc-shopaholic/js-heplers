@@ -1,8 +1,8 @@
+import ShopaholicCartPosition from "@oc-shopaholic/shopaholic-cart/shopaholic-cart-position";
+
 /**
  * @author  Andrei Kharanenka, <a.kharanenka@lovata.com>, LOVATA Group
  */
-import ShopaholicCartPosition from "@oc-shopaholic/shopaholic-cart/shopaholic-cart-position";
-
 export default class ShopaholicCart {
   constructor() {
     /* Selectors */
@@ -44,8 +44,8 @@ export default class ShopaholicCart {
 
     const obThis = this;
     oc.ajax(this.componentHandler, {
-      complete: ({responseJSON}) => {
-        obThis.obCartData = responseJSON;
+      complete: (response) => {
+        obThis.obCartData = response;
         obThis.dispatchUpdateEvent();
       },
     });

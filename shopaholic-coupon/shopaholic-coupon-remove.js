@@ -46,13 +46,14 @@ export default class ShopaholicCouponRemove {
   sendAjaxRequest(inputValue, inputNode, buttonNode) {
     const obShippingType = new ShopaholicCartShippingType();
 
+    const obThis = this;
     let obRequestData = {
       data: {
         coupon: inputValue,
         shipping_type_id: obShippingType.getShippingTypeID(),
       },
-      complete: ({ responseJSON }) => {
-        this.completeCallback(responseJSON, inputNode, buttonNode);
+      complete: (response) => {
+        obThis.completeCallback(response, inputNode, buttonNode);
       },
     };
 
