@@ -12,11 +12,8 @@ export default class ShopaholicCart {
     this.componentHandler = 'Cart::onGetData';
     this.iRadix = 10;
 
-    this.wrapperNodeClass = '_shopaholic-cart';
     this.oldPriceNodeClass = '_shopaholic-old-price';
-    this.hideOldPriceClass = '_shopaholic-hide-old-price';
-    this.groupAttributeName = 'data-group';
-    this.fieldAttributeName = 'data-field';
+    this.hideOldPriceClass = 'hidden';
 
     this.obCartData = null;
   }
@@ -65,6 +62,7 @@ export default class ShopaholicCart {
    */
   updateCartData(obCartData) {
     this.obCartData = obCartData;
+    this.updateCartFields();
     this.dispatchUpdateEvent();
   }
 
@@ -146,94 +144,75 @@ export default class ShopaholicCart {
     return obPositionList && obPositionList[iPositionID] ? obPositionList[iPositionID] : null;
   }
 
-  /**
-   * Find price fields and update price values
-   */
-  renderPriceFields() {
-    const obNodeList = document.querySelectorAll(`.${this.wrapperNodeClass}`);
-    if (!obNodeList || obNodeList.length === 0) {
+  updateCartFields() {
+    const cartNodeList = document.querySelectorAll(`._shopaholic-cart`);
+    if (!cartNodeList || cartNodeList.length === 0 || !this.obCartData) {
       return;
     }
 
-    obNodeList.forEach((obPriceNode) => {
-      const sGroupOriginal = obPriceNode.getAttribute(this.groupAttributeName);
-      const sGroup = !!sGroupOriginal ? sGroupOriginal.replace(/-/g, '_').toLowerCase() : sGroupOriginal;
-      const sFieldOriginal = obPriceNode.getAttribute(this.fieldAttributeName);
-      const sField = !!sFieldOriginal? sFieldOriginal.replace(/-/g, '_').toLowerCase() : sFieldOriginal;
-      let sNewValue = '';
-
-      if (sGroup === 'position') {
-        const obCartPosition = new ShopaholicCartPosition(obPriceNode);
-        const iPositionID = obCartPosition.getPositionID();
-        sNewValue = this.getOfferPositionField(iPositionID, sField);
-
-        obPriceNode.textContent = sNewValue;
-        this.processPositionOldPriceField(obCartPosition, sField, sFieldOriginal, sGroupOriginal);
-      } else {
-        sNewValue = this.getField(sGroup, sField);
-
-        obPriceNode.textContent = sNewValue;
-        this.processOldPriceField(sField, sFieldOriginal, sGroup, sGroupOriginal);
-      }
-
-    });
+    cartNodeList.forEach((cartNode) => {
+      this.updateCartNode(cartNode);
+    })
   }
 
-  /**
-   * Process old price field of position
-   * @param {ShopaholicCartPosition} obCartPosition
-   * @param {string} sField
-   * @param {string} sFieldOriginal
-   * @param {string} sGroupOriginal
-   */
-  processPositionOldPriceField(obCartPosition, sField, sFieldOriginal, sGroupOriginal) {
-    if (sField.indexOf('old_price') < 0) {
+  updateCartNode(cartNode) {
+    const fieldPath = cartNode.dataset.field;
+    if (!fieldPath) {
       return;
     }
 
-    const iPositionID = obCartPosition.getPositionID();
-    const obCartNode = obCartPosition.getWrapperNode();
-    const obOldPriceNodeList = obCartNode.querySelectorAll(`.${this.oldPriceNodeClass}[data-group="${sGroupOriginal}"][data-field="${sFieldOriginal}"]`);
-    if (!obOldPriceNodeList || obOldPriceNodeList.length === 0) {
+    const fieldContent = this.getFieldContent(this.obCartData, fieldPath);
+    cartNode.innerHTML = fieldContent;
+
+    const oldPriceNode = cartNode.closest(`.${this.oldPriceNodeClass}`);
+    if (!oldPriceNode) {
       return;
     }
 
-    const fDiscountPrice = this.getOfferPositionField(iPositionID, sField.replace(/old_price/g, 'discount_price') + '_value');
-
-    obOldPriceNodeList.forEach((obOldPriceNode) => {
-      if (fDiscountPrice > 0) {
-        obOldPriceNode.classList.remove(this.hideOldPriceClass);
-      } else {
-        obOldPriceNode.classList.add(this.hideOldPriceClass);
-      }
-    });
+    let discountField = fieldPath.replace(/old_price/g, 'discount_price');
+    discountField = `${discountField}_value`;
+    const discountValue = this.getFieldContent(this.obCartData, discountField);
+    if (discountValue > 0) {
+      oldPriceNode.classList.remove(this.hideOldPriceClass);
+    } else {
+      oldPriceNode.classList.add(this.hideOldPriceClass);
+    }
   }
 
-  /**
-   * Process old price field
-   * @param {string} sField
-   * @param {string} sFieldOriginal
-   * @param {string} sGroup
-   * @param {string} sGroupOriginal
-   */
-  processOldPriceField(sField, sFieldOriginal, sGroup, sGroupOriginal) {
-    if (sField.indexOf('old_price') < 0) {
-      return;
+  getFieldContent (target, field, defaultValue = null) {
+    let value = defaultValue;
+    if (!target || !field) {
+      return value;
     }
 
-    const obOldPriceNodeList = document.querySelectorAll(`.${this.oldPriceNodeClass}[data-group="${sGroupOriginal}"][data-field="${sFieldOriginal}"]`);
-    if (!obOldPriceNodeList || obOldPriceNodeList.length === 0) {
-      return;
-    }
+    // Try to get value from inner object via dot delimiter
+    const delimiterPosition = field.indexOf('.');
+    if (delimiterPosition !== -1) {
+      // Try to get target field
+      let targetField = field.substring(0, delimiterPosition);
 
-    const fDiscountPrice = this.getField(sGroup, sField.replace(/old_price/g, 'discount_price') + '_value');
-
-    obOldPriceNodeList.forEach((obOldPriceNode) => {
-      if (fDiscountPrice > 0) {
-        obOldPriceNode.classList.remove(this.hideOldPriceClass);
-      } else {
-        obOldPriceNode.classList.add(this.hideOldPriceClass);
+      // Check: targetField contains condition or not
+      let conditionValue = null;
+      const newFieldName = field.substring(delimiterPosition + 1);
+      const conditionPosition = targetField.indexOf('=');
+      if (conditionPosition !== -1) {
+        conditionValue = targetField.substring(conditionPosition + 1);
+        targetField = targetField.substring(0, conditionPosition);
       }
-    });
+
+      let newTarget = target[targetField];
+      if (!newTarget && conditionValue !== null) {
+        target = !Array.isArray(target) ? Object.values(target) : target;
+        newTarget = target.find((rowData) => {
+          return rowData[targetField] == conditionValue;
+        })
+      }
+
+      return this.getFieldContent(newTarget, newFieldName, value);
+    } else if (target.hasOwnProperty(field)) {
+      value = target[field];
+    }
+
+    return value;
   }
 }

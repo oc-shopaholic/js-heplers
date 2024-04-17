@@ -56,7 +56,9 @@ export default class ShopaholicCartUpdate {
           return;
         }
 
-        obThis.sendAjaxRequest(inputNode);
+        if (!inputNode.dataset.blockRequest !== 'enable') {
+          obThis.sendAjaxRequest(inputNode);
+        }
       }, obThis.delayBeforeRequest);
     });
   }
@@ -101,7 +103,9 @@ export default class ShopaholicCartUpdate {
       }
 
       obThis.obTimer = setTimeout(() => {
-        obThis.sendAjaxRequest(inputNode);
+        if (buttonNode.dataset.blockRequest !== 'enable') {
+          obThis.sendAjaxRequest(inputNode);
+        }
       }, obThis.delayBeforeRequest);
     });
   }
@@ -146,7 +150,9 @@ export default class ShopaholicCartUpdate {
       }
 
       obThis.obTimer = setTimeout(() => {
-        obThis.sendAjaxRequest(inputNode);
+        if (buttonNode.dataset.blockRequest !== 'enable') {
+          obThis.sendAjaxRequest(inputNode);
+        }
       }, obThis.delayBeforeRequest);
     });
   }
